@@ -1,3 +1,8 @@
+## 0.2.2
+- API documentation
+- updated documentation
+- updated example
+
 ## 0.2.1
 - updated documentation
 - updated example
