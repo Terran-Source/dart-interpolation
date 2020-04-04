@@ -142,6 +142,9 @@ class Interpolation {
   factory Interpolation({InterpolationOption option}) =>
       Interpolation._init(option ?? InterpolationOption());
 
+  String _missingKeyKeepAlive(String key) =>
+      '${_option._prefix}$key${_option._suffix}';
+
   RegExp get _getParamRegex => RegExp(
       '${_option.prefix}'
       '($_spaces$_paramExpressionSet'
@@ -186,8 +189,7 @@ class Interpolation {
     var result = key
         .split(_option._subKeyPointer)
         .fold(obj, (parent, k) => parent is String ? parent : parent[k]);
-    return result?.toString() ??
-        (keepAlive ? '${_option._prefix}$key${_option._suffix}' : '');
+    return result?.toString() ?? (keepAlive ? _missingKeyKeepAlive(key) : '');
   }
 
   Set<String> _getMatchSet(String str) =>
@@ -212,7 +214,8 @@ class Interpolation {
       // Step 1: Get current value
       var curVal = traverse(obj, match, keepAlive);
       // Step 2: If it contains other parameters
-      if (_paramRegex.hasMatch(curVal)) {
+      if (_missingKeyKeepAlive(match) != curVal &&
+          _paramRegex.hasMatch(curVal)) {
         // it's time to update cache with missing matchSet
         var missingMatchSet = _getMatchSet(curVal);
         missingMatchSet.removeAll(cache.keys);
