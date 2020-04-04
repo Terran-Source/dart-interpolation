@@ -1,3 +1,6 @@
+## 0.2.4
+- added Interpolation._missingKeyKeepAlive
+
 ## 0.2.3
 - Interpolation.traverse fix & keepAlive
 
