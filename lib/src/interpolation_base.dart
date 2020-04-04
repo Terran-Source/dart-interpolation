@@ -156,6 +156,10 @@ class Interpolation {
   /// Supports multi-level traversing.
   /// That's where the `InterpolationOption.subKeyPointer` comes into place.
   ///
+  /// If [keepAlive] is set to `true`, it'll leave all placeholders
+  /// intact if the value is not found inside [obj].
+  /// Or else, it'll be substituted with '' (empty String)
+  ///
   /// Example:
   /// ```dart
   /// var interpolation = Interpolation();
@@ -172,12 +176,18 @@ class Interpolation {
   /// // output: 10
   /// print(interpolation.traverse(obj, 'c.e'));
   /// // output: Hello {c.d}
+  /// print(interpolation.traverse(obj, 'c.g')); // not present
+  /// // output: (empty string)
+  /// print(interpolation.traverse(obj, 'c.g', true)); // not present but keepAlive
+  /// // output: {c.g}
   /// ```
-  String traverse(Map<String, dynamic> obj, String key) {
+  String traverse(Map<String, dynamic> obj, String key,
+      [bool keepAlive = false]) {
     var result = key
         .split(_option._subKeyPointer)
         .fold(obj, (parent, k) => parent is String ? parent : parent[k]);
-    return result?.toString() ?? '${_option._prefix}$key${_option.suffix}';
+    return result?.toString() ??
+        (keepAlive ? '${_option._prefix}$key${_option._suffix}' : '');
   }
 
   Set<String> _getMatchSet(String str) =>
@@ -200,7 +210,7 @@ class Interpolation {
     matchSet.forEach((match) {
       if (cache.containsKey(match)) return;
       // Step 1: Get current value
-      var curVal = traverse(obj, match);
+      var curVal = traverse(obj, match, keepAlive);
       // Step 2: If it contains other parameters
       if (_paramRegex.hasMatch(curVal)) {
         // it's time to update cache with missing matchSet
