@@ -1,3 +1,6 @@
+## 0.2.3
+- Interpolation.traverse fix & keepAlive
+
 ## 0.2.2
 - API documentation
 - updated documentation
