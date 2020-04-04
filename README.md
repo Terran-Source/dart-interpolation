@@ -19,10 +19,15 @@ import 'package:interpolation/interpolation.dart';
 
 void main() {
   var interpolation = Interpolation();
-  var str = "Hi, my name is '{name}'. I'm {age}.";
+  var str =
+      "Hi, my name is '{name}'. I'm {age}. I am {education.degree} {education.profession}.";
 
-  print(interpolation.eval(str, {'name': 'David', 'age': 18}));
-  // output: Hi, my name is 'David'. I'm 18.
+  print(interpolation.eval(str, {
+    'name': 'David',
+    'age': 29,
+    'education': {'degree': 'M.B.B.S', 'profession': 'Doctor'}
+  }));
+  // output: Hi, my name is 'David'. I'm 29. I am M.B.B.S Doctor.
 
   var obj = {
     'a': 'a',
@@ -34,6 +39,13 @@ void main() {
     }
   };
 
+  // traverse the object
+  print(interpolation.traverse(obj, 'b'));
+  // output: 10
+  print(interpolation.traverse(obj, 'c.e'));
+  // output: Hello {c.d}
+
+  // resolve the object
   print(interpolation.resolve(obj));
   // output: {a: a, b: 10, c: {d: d, e: Hello d, f: Hi "a", am I deep enough, or need to show "Hello d" with 10}}
   print(obj);
