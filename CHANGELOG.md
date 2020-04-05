@@ -1,3 +1,6 @@
+## 0.2.5
+- updated documentation
+
 ## 0.2.4
 - added Interpolation._missingKeyKeepAlive
 
