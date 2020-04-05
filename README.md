@@ -44,6 +44,10 @@ void main() {
   // output: 10
   print(interpolation.traverse(obj, 'c.e'));
   // output: Hello {c.d}
+  print(interpolation.traverse(obj, 'c.g')); // not present
+  // output: (empty string)
+  print(interpolation.traverse(obj, 'c.g', true)); // not present but keepAlive
+  // output: {c.g}
 
   // resolve the object
   print(interpolation.resolve(obj));

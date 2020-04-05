@@ -1,8 +1,4 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// A Dart package to handle dynamic String & Json interpolation.
 library interpolation;
 
 export 'src/interpolation_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.
