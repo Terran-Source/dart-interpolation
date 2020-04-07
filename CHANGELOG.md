@@ -1,3 +1,6 @@
+## 1.0.0
+- first major release :)
+
 ## 0.2.5
 - updated documentation
 
