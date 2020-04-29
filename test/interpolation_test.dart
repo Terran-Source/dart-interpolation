@@ -2,21 +2,28 @@ import 'package:interpolation/interpolation.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('A simple String Interpolation', () {
+  group('Simple String Interpolation:', () {
     Interpolation interpolation;
-    const str = "Hi, my name is '{name}'. I'm {age}.";
-    const values = {'name': 'David', 'age': 18};
     setUp(() {
       interpolation = Interpolation();
     });
 
-    test('First Test', () {
+    test('First Test with couple of interpolation', () {
+      const str = "Hi, my name is '{name}'. I'm {age}.";
+      const values = {'name': 'David', 'age': 18};
       var result = interpolation.eval(str, values);
       expect(result,
           equals("Hi, my name is '${values["name"]}'. I'm ${values["age"]}."));
     });
+
+    test('Test with just single interpolation', () {
+      const str = "Hi, I'm {name}";
+      const values = {'name': 'David'};
+      var result = interpolation.eval(str, values);
+      expect(result, equals("Hi, I'm ${values["name"]}"));
+    });
   });
-  group('A String Interpolation with custom parameter boundary', () {
+  group('String Interpolation (custom option)', () {
     Interpolation interpolation;
     const str = r"Hi, my name is '${name}'. I'm ${age}.";
     const values = {'name': 'David', 'age': 18};
@@ -25,7 +32,7 @@ void main() {
       interpolation = Interpolation(option: option);
     });
 
-    test('First Test', () {
+    test('First Test - prefix: "\${"', () {
       var result = interpolation.eval(str, values);
       expect(result,
           equals("Hi, my name is '${values["name"]}'. I'm ${values["age"]}."));

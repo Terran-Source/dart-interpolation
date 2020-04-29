@@ -80,13 +80,15 @@ class InterpolationOption {
 /// Create an instance of [Interpolation]
 /// ```dart
 /// var interpolation = Interpolation();
-/// // or with custom option
-/// var interpolation = Interpolation(
+/// // or, with custom option
+/// var interpolationCustom = Interpolation(
 ///    option: InterpolationOption(prefix: r'$(', suffix: ')', subKeyPointer: '_'));
 /// ```
 /// Now, a string with placeholder would look like
 /// ```dart
 /// var str = "Hi, my name is '{name}'. I'm {age}. I am {education.degree} {education.profession}.";
+/// // or, with custom option
+/// var strCustom = "Hi, my name is '$(name)'. I'm $(age). I am $(education_degree) $(education_profession).";
 /// ```
 /// and, the appropriate value collection for it may be
 /// ```dart
@@ -102,6 +104,8 @@ class InterpolationOption {
 /// Now, just use [eval] to get the interpolated string
 /// ```dart
 /// print(interpolation.eval(str, value));
+/// // or, with custom option
+/// print(interpolationCustom.eval(strCustom, value));
 /// // output: Hi, my name is 'David'. I'm 29. I am M.B.B.S Doctor.
 /// ```
 ///
