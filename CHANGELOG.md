@@ -1,3 +1,7 @@
+## 1.0.1
+- minor refactoring
+- test update
+
 ## 1.0.0
 - first major release :)
 
