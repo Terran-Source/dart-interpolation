@@ -205,7 +205,9 @@ class Interpolation {
       var param = match.group(1).trim();
       return values.containsKey(param)
           ? values[param]
-          : keepAlive ? match.group(0) : '';
+          : keepAlive
+              ? match.group(0)
+              : '';
     });
   }
 
