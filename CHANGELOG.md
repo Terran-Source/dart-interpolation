@@ -1,3 +1,6 @@
+## 1.0.2
+- minor file format
+
 ## 1.0.1
 - minor refactoring
 - test update
