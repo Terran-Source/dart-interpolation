@@ -1,3 +1,7 @@
+## 2.0.0
+- upgraded to null-safety
+- updated tests
+
 ## 1.0.2
 - minor file format
 

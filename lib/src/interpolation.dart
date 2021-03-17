@@ -129,7 +129,7 @@ class InterpolationOption {
 /// ```
 class Interpolation {
   final InterpolationOption _option;
-  RegExp _paramRegex;
+  late RegExp _paramRegex;
 
   Interpolation._init(this._option) {
     _paramRegex = _getParamRegex;
@@ -143,7 +143,7 @@ class Interpolation {
   /// var interpolation = Interpolation(
   ///    option: InterpolationOption(prefix: r'$(', suffix: ')', subKeyPointer: '_'));
   /// ```
-  factory Interpolation({InterpolationOption option}) =>
+  factory Interpolation({InterpolationOption? option}) =>
       Interpolation._init(option ?? InterpolationOption());
 
   String _missingKeyKeepAlive(String key) =>
@@ -188,32 +188,36 @@ class Interpolation {
   /// print(interpolation.traverse(obj, 'c.g', true)); // not present but keepAlive
   /// // output: {c.g}
   /// ```
-  String traverse(Map<String, dynamic> obj, String key,
+  String traverse(Map<String, dynamic>? obj, String key,
       [bool keepAlive = false]) {
-    var result = key
-        .split(_option._subKeyPointer)
-        .fold(obj, (parent, k) => parent is String ? parent : parent[k]);
+    var result = key.split(_option._subKeyPointer).fold(
+        obj,
+        (parent, k) => null == parent
+            ? null
+            : parent is String
+                ? parent
+                : (parent as dynamic)[k]);
     return result?.toString() ?? (keepAlive ? _missingKeyKeepAlive(key) : '');
   }
 
   Set<String> _getMatchSet(String str) =>
-      _paramRegex.allMatches(str).map((match) => match.group(1)).toSet();
+      _paramRegex.allMatches(str).map((match) => match[1]!).toSet();
 
   String _getInterpolated(String str, Map<String, String> values,
       [bool keepAlive = false]) {
     return str.replaceAllMapped(_paramRegex, (match) {
-      var param = match.group(1).trim();
+      var param = match[1]!.trim();
       return values.containsKey(param)
-          ? values[param]
+          ? values[param]!
           : keepAlive
-              ? match.group(0)
+              ? match[0]!
               : '';
     });
   }
 
   Map<String, String> _flattenAndResolve(
       Map<String, dynamic> obj, Set<String> matchSet,
-      [Map<String, String> oldCache, bool keepAlive = false]) {
+      [Map<String, String>? oldCache, bool keepAlive = false]) {
     var cache = oldCache ?? <String, String>{};
     matchSet.forEach((match) {
       if (cache.containsKey(match)) return;
@@ -231,7 +235,7 @@ class Interpolation {
         curVal = _getInterpolated(curVal, cache, keepAlive);
       }
       // Step 5: Finally
-      cache[match] = curVal;
+      cache[match] = curVal.replaceAll('"', '\\"');
     });
     return cache;
   }
