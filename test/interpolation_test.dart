@@ -3,7 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   group('Simple String Interpolation:', () {
-    Interpolation interpolation;
+    late Interpolation interpolation;
+
     setUp(() {
       interpolation = Interpolation();
     });
@@ -23,19 +24,147 @@ void main() {
       expect(result, equals("Hi, I'm ${values["name"]}"));
     });
   });
+
   group('String Interpolation (custom option)', () {
-    Interpolation interpolation;
+    late Interpolation interpolation;
     const str = r"Hi, my name is '${name}'. I'm ${age}.";
     const values = {'name': 'David', 'age': 18};
+
     setUp(() {
       var option = InterpolationOption(prefix: r'${');
       interpolation = Interpolation(option: option);
     });
 
-    test('First Test - prefix: "\${"', () {
+    test('- prefix: "\${"', () {
       var result = interpolation.eval(str, values);
       expect(result,
           equals("Hi, my name is '${values["name"]}'. I'm ${values["age"]}."));
+    });
+  });
+
+  group('Simple Json Interpolation:', () {
+    late Interpolation interpolation;
+
+    setUp(() {
+      interpolation = Interpolation();
+    });
+
+    test('First Test with full object multi-level interpolation', () {
+      var obj = {
+        'a': '{c.d}',
+        'b': 10,
+        'c': {
+          'd': 'd',
+          'e': 'Hello {c.d}',
+          'f': 'Hi "{a}", am I deep enough, or need to show "{c.e}" with {b}'
+        },
+        'g': 'High level => \${c.f}'
+      };
+
+      var result = interpolation.resolve(obj);
+      expect(interpolation.traverse(obj, 'b'), "10");
+      expect(interpolation.traverse(obj, 'c.e'), "Hello {c.d}");
+      expect(interpolation.traverse(obj, 'c.g'), "");
+      expect(interpolation.traverse(obj, 'c.g', true), "{c.g}");
+      expect(
+          result,
+          equals({
+            'a': '${result["c"]["d"]}',
+            'b': 10,
+            'c': {
+              'd': 'd',
+              'e': 'Hello ${result["c"]["d"]}',
+              'f':
+                  'Hi "${result["a"]}", am I deep enough, or need to show "${result["c"]["e"]}" with ${result["b"]}'
+            },
+            'g':
+                'High level => \$${result["c"]["f"]}' // 'High level => ${result["c"]["f"]}'
+          }));
+    });
+
+    test('Test with just single interpolation', () {
+      var obj = {
+        'a': '{c.d}',
+        'b': 10,
+        'c': {'d': 'd'}
+      };
+
+      var result = interpolation.resolve(obj);
+      expect(interpolation.traverse(obj, 'b'), "10");
+      expect(interpolation.traverse(obj, 'c.d'), "d");
+      expect(interpolation.traverse(obj, 'c.g'), "");
+      expect(interpolation.traverse(obj, 'c.g', true), "{c.g}");
+      expect(
+          result,
+          equals({
+            'a': '${result["c"]["d"]}',
+            'b': 10,
+            'c': {'d': 'd'}
+          }));
+    });
+  });
+
+  group('Json Interpolation (custom option):', () {
+    late Interpolation interpolation;
+
+    setUp(() {
+      var option = InterpolationOption(prefix: r'${');
+      interpolation = Interpolation(option: option);
+    });
+
+    test('Full object multi-level interpolation - prefix: "\${"', () {
+      var obj = {
+        'a': '\${c.d}',
+        'b': 10,
+        'c': {
+          'd': 'd',
+          'e': 'Hello \${c.d}',
+          'f':
+              'Hi "\${a}", am I deep enough, or need to show "\${c.e}" with \${b}'
+        },
+        'g': 'High level => \$\${c.f}'
+      };
+
+      var result = interpolation.resolve(obj);
+      expect(interpolation.traverse(obj, 'b'), "10");
+      expect(interpolation.traverse(obj, 'c.e'), "Hello \${c.d}");
+      expect(interpolation.traverse(obj, 'c.g'), "");
+      expect(interpolation.traverse(obj, 'c.g', true), "\${c.g}");
+      expect(
+          result,
+          equals({
+            'a': '${result["c"]["d"]}',
+            'b': 10,
+            'c': {
+              'd': 'd',
+              'e': 'Hello ${result["c"]["d"]}',
+              'f':
+                  'Hi "${result["a"]}", am I deep enough, or need to show "${result["c"]["e"]}" with ${result["b"]}'
+            },
+            'g':
+                'High level => \$${result["c"]["f"]}' // 'High level => ${result["c"]["f"]}'
+          }));
+    });
+
+    test('Single interpolation - prefix: "\${"', () {
+      var obj = {
+        'a': '\${c.d}',
+        'b': 10,
+        'c': {'d': 'd'}
+      };
+
+      var result = interpolation.resolve(obj);
+      expect(interpolation.traverse(obj, 'b'), "10");
+      expect(interpolation.traverse(obj, 'c.d'), "d");
+      expect(interpolation.traverse(obj, 'c.g'), "");
+      expect(interpolation.traverse(obj, 'c.g', true), "\${c.g}");
+      expect(
+          result,
+          equals({
+            'a': '${result["c"]["d"]}',
+            'b': 10,
+            'c': {'d': 'd'}
+          }));
     });
   });
 }

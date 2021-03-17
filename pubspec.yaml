@@ -6,7 +6,7 @@ repository: https://github.com/Terran-Source/dart-interpolation
 issue_tracker: https://github.com/Terran-Source/dart-interpolation/issues
 
 environment:
-  sdk: '>=2.1.0 <3.0.0'
+  sdk: '>=2.12.0 <3.0.0'
 
 dev_dependencies:
-  test: ^1.14.2
+  test: ^1.16.8
