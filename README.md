@@ -1,4 +1,5 @@
-# interpolation
+# interpolation [![Pub version](https://img.shields.io/pub/v/interpolation.svg?style=plastic)](https://pub.dev/packages/extend) [![GitHub](https://img.shields.io/github/license/Terran-Source/dart-interpolation?logo=github&style=plastic)](LICENSE)
+
 A Dart package to handle dynamic String & Json interpolation.
 
 ## Usage

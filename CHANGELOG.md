@@ -1,3 +1,6 @@
+## 2.1.1
+- updated doc
+
 ## 2.1.0
 - upgraded to dynamic Map
 
