@@ -188,8 +188,7 @@ class Interpolation {
   /// print(interpolation.traverse(obj, 'c.g', true)); // not present but keepAlive
   /// // output: {c.g}
   /// ```
-  String traverse(Map<String, dynamic>? obj, String key,
-      [bool keepAlive = false]) {
+  String traverse(Map? obj, String key, [bool keepAlive = false]) {
     var result = key.split(_option._subKeyPointer).fold(
         obj,
         (parent, k) => null == parent
@@ -203,8 +202,7 @@ class Interpolation {
   Set<String> _getMatchSet(String str) =>
       _paramRegex.allMatches(str).map((match) => match[1]!).toSet();
 
-  String _getInterpolated(String str, Map<String, String> values,
-      [bool keepAlive = false]) {
+  String _getInterpolated(String str, Map values, [bool keepAlive = false]) {
     return str.replaceAllMapped(_paramRegex, (match) {
       var param = match[1]!.trim();
       return values.containsKey(param)
@@ -215,9 +213,8 @@ class Interpolation {
     });
   }
 
-  Map<String, String> _flattenAndResolve(
-      Map<String, dynamic> obj, Set<String> matchSet,
-      [Map<String, String>? oldCache, bool keepAlive = false]) {
+  Map _flattenAndResolve(Map obj, Set<String> matchSet,
+      [Map? oldCache, bool keepAlive = false]) {
     var cache = oldCache ?? <String, String>{};
     matchSet.forEach((match) {
       if (cache.containsKey(match)) return;
@@ -245,8 +242,7 @@ class Interpolation {
   /// If [keepAlive] is set to `true`, it'll leave all placeholders
   /// intact if the value is not found inside [values].
   /// Or else, it'll be substituted with '' (empty String)
-  String eval(String str, Map<String, dynamic> values,
-      [bool keepAlive = false]) {
+  String eval(String str, Map values, [bool keepAlive = false]) {
     if (_paramRegex.hasMatch(str)) {
       var missingMatchSet = _getMatchSet(str);
       var cache = _flattenAndResolve(values, missingMatchSet, null, keepAlive);
@@ -261,8 +257,7 @@ class Interpolation {
   /// If [keepAlive] is set to `true`, it'll leave all placeholders
   /// intact if the value is not found inside [obj].
   /// Or else, it'll be substituted with '' (empty String)
-  Map<String, dynamic> resolve(Map<String, dynamic> obj,
-      [bool keepAlive = false]) {
+  Map resolve(Map obj, [bool keepAlive = false]) {
     var jsonString = json.encode(obj);
     jsonString = eval(jsonString, obj, keepAlive);
     return json.decode(jsonString);

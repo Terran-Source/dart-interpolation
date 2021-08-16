@@ -1,3 +1,6 @@
+## 2.1.0
+- upgraded to dynamic Map
+
 ## 2.0.0
 - upgraded to null-safety
 - updated tests
