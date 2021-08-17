@@ -1,3 +1,7 @@
+## 2.1.2
+- fixing #2
+- updated tests
+
 ## 2.1.1
 - updated doc
 

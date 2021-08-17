@@ -1,6 +1,6 @@
 name: interpolation
 description: A Dart package to handle dynamic String & Json interpolation.
-version: 2.1.1
+version: 2.1.2
 homepage: https://github.com/Terran-Source/dart-interpolation
 repository: https://github.com/Terran-Source/dart-interpolation
 issue_tracker: https://github.com/Terran-Source/dart-interpolation/issues
