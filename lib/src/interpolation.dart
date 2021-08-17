@@ -200,7 +200,7 @@ class Interpolation {
   }
 
   Set<String> _getMatchSet(String str) =>
-      _paramRegex.allMatches(str).map((match) => match[1]!).toSet();
+      _paramRegex.allMatches(str).map((match) => match[1]!.trim()).toSet();
 
   String _getInterpolated(String str, Map values, [bool keepAlive = false]) {
     return str.replaceAllMapped(_paramRegex, (match) {
