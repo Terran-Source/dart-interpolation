@@ -1,0 +1,110 @@
+# Automatically generated on 2021-09-14 UTC from https://codemagic.io/app/61406da1db381605df6889a7/settings
+
+workflows:
+  dart-latest-workflow: &base-flow
+    name: Dart Latest Workflow
+    instance_type: mac_mini # available are 'mac_mini', 'mac_pro'*, 'linux'*, 'linux_x2'* (*: with billing only)
+    max_build_duration: 30
+    # working_directory: # default to `$FCI_BUILD_DIR`. set this if it's other the repo root
+    environment:
+      # vars:
+      #   SKIP_TEST: 1
+      #   SKIP_CODE_METRICS: 1
+      flutter: stable # available are 'stable', 'beta', vX.Y.Z, X.Y.Z
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - ~/.pub-cache
+    triggering:
+      events:
+        - push
+        - pull_request
+        # - tag # usually used for publishing package
+      branch_patterns:
+        - pattern: main # or 'master' for legacy repo
+          include: true
+          source: true
+        - pattern: dev
+          include: true
+          source: true
+        - pattern: feature/*
+          include: true
+          source: true
+        - pattern: hotfix/*
+          include: true
+          source: true
+      # tag_patterns: # usually used for publishing package
+      #   - pattern: v[1-9]*.[0-9]*
+      #     include: true
+      #   - pattern: v[1-9]*.[0-9]*.[0-9]*
+      #     include: true
+    # when: # describe to include and/or exclude path's from triggering
+    #   changeset:
+    #     includes:
+    #       - '.'
+    #     excludes:
+    #       - '**/*.md'
+    scripts:
+      - name: Check SDK versions
+        script: |
+          # export PATH=$FLUTTER_ROOT/bin:$FLUTTER_ROOT/.pub-cache/bin:$PATH # uncomment if face `pub` error
+          echo "----"
+          flutter --version
+          echo "----"
+          $FLUTTER_ROOT/bin/dart --version
+          echo "----"
+      # - name: Check Project Directory
+      #   script: |
+      #     echo "Project path: $FCI_BUILD_DIR"
+      - name: Test Project & Run Example
+        script: |
+          if [[ ! -z ${SKIP_TEST+x} && "$SKIP_TEST" == "1" ]]; then
+            echo "Skipping Dart Test check"
+          else
+            echo "Continue with Dart Test check"
+            # cd $FCI_BUILD_DIR
+            $FLUTTER_ROOT/bin/dart pub get
+            mkdir -p test-results
+            $FLUTTER_ROOT/bin/dart test --file-reporter json:test-results/test-results.json
+            mkdir -p example-results
+            $FLUTTER_ROOT/bin/dart run example/extend_example.dart > example-results/example-results.txt
+          fi
+        test_report: test-results/test-results.json
+      - name: Dart Code Metrics
+        script: |
+          if [[ ! -z ${SKIP_CODE_METRICS+x} && "$SKIP_CODE_METRICS" == "1" ]]; then
+            echo "Skipping Dart Code Metrics check"
+          else
+            echo "Continue with Dart Code Metrics check"
+            flutter pub global activate dart_code_metrics 4.2.1
+            # cd $FCI_BUILD_DIR
+            mkdir -p metrics-results
+            flutter pub global run dart_code_metrics:metrics analyze lib --reporter=json > metrics-results/dart_code_metrics.json
+          fi
+        test_report: metrics-results/dart_code_metrics.json
+    artifacts:
+      - test-results/test-results.json
+      - example-results/example-results.txt
+      - metrics-results/dart_code_metrics.json
+    publishing:
+      email:
+        recipients:
+          - patra.tamal@gmail.com
+  dart-basic-null-safety-workflow:
+    <<: *base-flow
+    name: Dart Null Safety Workflow
+    environment:
+      vars:
+        SKIP_CODE_METRICS: 1
+      flutter: 2.0.0
+  dart-tagged-deploy-workflow:
+    <<: *base-flow
+    name: Dart Deploy tagged Package Workflow
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: v[1-9]*.[0-9]*
+          include: true
+        - pattern: v[1-9]*.[0-9]*.[0-9]*
+          include: true
