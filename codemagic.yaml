@@ -67,7 +67,7 @@ workflows:
             mkdir -p test-results
             $FLUTTER_ROOT/bin/dart test --file-reporter json:test-results/test-results.json
             mkdir -p example-results
-            $FLUTTER_ROOT/bin/dart run example/extend_example.dart > example-results/example-results.txt
+            $FLUTTER_ROOT/bin/dart run example/interpolation_example.dart > example-results/example-results.txt
           fi
         test_report: test-results/test-results.json
       - name: Dart Code Metrics
